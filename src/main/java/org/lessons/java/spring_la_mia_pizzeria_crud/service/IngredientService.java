@@ -52,7 +52,7 @@ public class IngredientService {
 
     public void deleteById(Integer id) {
         Ingredient ingredient = getById(id);
-        
+
         for (Pizza linkedPizza : ingredient.getPizzas()) {
             linkedPizza.getIngredients().remove(ingredient);
         }
