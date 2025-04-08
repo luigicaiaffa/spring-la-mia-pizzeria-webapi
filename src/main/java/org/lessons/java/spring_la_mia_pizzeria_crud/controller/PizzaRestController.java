@@ -8,7 +8,9 @@ import org.lessons.java.spring_la_mia_pizzeria_crud.service.PizzaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,8 +27,15 @@ public class PizzaRestController {
     private PizzaService pizzaService;
 
     @GetMapping
-    public List<Pizza> index() {
-        List<Pizza> pizzas = pizzaService.findAll();
+    public List<Pizza> index(Model model, @RequestParam(name = "name", required = false) String name) {
+        List<Pizza> pizzas;
+
+        if (name != null && !name.isEmpty()) {
+            pizzas = pizzaService.findByName(name);
+        } else {
+            pizzas = pizzaService.findAll();
+        }
+
         return pizzas;
     }
 
