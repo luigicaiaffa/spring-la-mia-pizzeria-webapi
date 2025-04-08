@@ -129,7 +129,7 @@ public class Pizza {
 
     @Override
     public String toString() {
-        return "Pizza: " + this.name + " " + this.price;
+        return this.name;
     }
 
 }
