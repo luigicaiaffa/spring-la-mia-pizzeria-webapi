@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class PizzaService {
 
@@ -39,7 +41,7 @@ public class PizzaService {
         Optional<Pizza> pizzaAttempt = pizzaRepository.findById(id);
 
         if (pizzaAttempt.isEmpty()) {
-            //
+            throw new EntityNotFoundException();
         }
 
         return pizzaAttempt.get();

@@ -9,6 +9,8 @@ import org.lessons.java.spring_la_mia_pizzeria_crud.repository.IngredientReposit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class IngredientService {
 
@@ -27,7 +29,7 @@ public class IngredientService {
         Optional<Ingredient> ingredientAttempt = ingredientRepository.findById(id);
 
         if (ingredientAttempt.isEmpty()) {
-            //
+            throw new EntityNotFoundException();
         }
 
         return ingredientAttempt.get();

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -59,9 +60,14 @@ public class IngredientController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
+        try {
+            model.addAttribute("edit", true);
+            model.addAttribute("ingredient", ingredientService.getById(id));
 
-        model.addAttribute("edit", true);
-        model.addAttribute("ingredient", ingredientService.getById(id));
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("ingredient", null);
+        }
+
         return "/ingredients/create-edit";
     }
 

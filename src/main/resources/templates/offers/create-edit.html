@@ -12,16 +12,38 @@
 
     <div class="container">
       <main>
-        <div class="d-flex justify-content-between align-items-center mt-5">
+        <div
+          th:if="${offer != null}"
+          class="d-flex justify-content-between align-items-center mt-5"
+        >
           <div>
-            <h1 th:if="${edit}">Edit offer "[[${offer.title}]]" to pizza "[[${offer.pizza.name}]]"</h1>
-            <h1 th:unless="${edit}">Add offer to pizza "[[${offer.pizza.name}]]"</h1>
+            <h1 th:if="${edit}">
+              Edit offer "[[${offer.title}]]" to pizza "[[${offer.pizza.name}]]"
+            </h1>
+            <h1 th:unless="${edit}">
+              Add offer to pizza "[[${offer.pizza.name}]]"
+            </h1>
           </div>
 
           <div>
-            <a class="btn btn-dark" th:href="@{/pizzas/{id}(id = ${offer.pizza.id})}"
+            <a
+              class="btn btn-dark"
+              th:href="@{/pizzas/{id}(id = ${offer.pizza.id})}"
               >Back to pizza</a
             >
+          </div>
+        </div>
+
+        <div
+          th:unless="${offer != null}"
+          class="d-flex justify-content-between align-items-center mt-5"
+        >
+          <div>
+            <h1>Error 404</h1>
+          </div>
+
+          <div>
+            <a class="btn btn-dark" th:href="@{/pizzas}">Back to list</a>
           </div>
         </div>
 
@@ -29,6 +51,7 @@
 
         <!-- Offer form -->
         <form
+          th:if="${offer != null}"
           id="pizza-form"
           method="POST"
           th:action="${edit} ? @{/offers/edit/{id}(id = ${offer.id})} : @{/offers/create}"
@@ -104,6 +127,11 @@
             <button type="submit" class="btn btn-success">Save</button>
           </div>
         </form>
+
+        <!-- error -->
+        <div th:unless="${offer != null}" class="my-5">
+          <h3>Offer not found</h3>
+        </div>
       </main>
     </div>
 

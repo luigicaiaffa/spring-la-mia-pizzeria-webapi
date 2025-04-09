@@ -13,13 +13,19 @@
     <div class="container">
       <main>
         <div class="d-flex justify-content-between align-items-center mt-5">
-          <div>
+          <div th:if="${ingredient != null}">
             <h1 th:if="${edit}">Update "[[${ingredient.name}]]"</h1>
             <h1 th:unless="${edit}">New ingredient</h1>
           </div>
 
+          <div th:unless="${ingredient != null}">
+            <h1>Error 404</h1>
+          </div>
+
           <div>
-            <a class="btn btn-dark" th:href="@{/ingredients}">Ingredients list</a>
+            <a class="btn btn-dark" th:href="@{/ingredients}"
+              >Ingredients list</a
+            >
           </div>
         </div>
 
@@ -27,6 +33,7 @@
 
         <!-- Ingredient form -->
         <form
+          th:if="${ingredient != null}"
           id="pizza-form"
           method="POST"
           th:action="${edit} ? @{/ingredients/edit/{id}(id = ${ingredient.id})} : @{/ingredients/create}"
@@ -58,6 +65,10 @@
             <button type="submit" class="btn btn-success">Save</button>
           </div>
         </form>
+
+        <div th:unless="${ingredient != null}">
+          <h3>Ingredient not found</h3>
+        </div>
       </main>
     </div>
 

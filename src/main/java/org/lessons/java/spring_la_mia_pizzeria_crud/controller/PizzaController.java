@@ -1,11 +1,9 @@
 package org.lessons.java.spring_la_mia_pizzeria_crud.controller;
 
 import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.lessons.java.spring_la_mia_pizzeria_crud.model.Offer;
 import org.lessons.java.spring_la_mia_pizzeria_crud.model.Pizza;
-import org.lessons.java.spring_la_mia_pizzeria_crud.repository.IngredientRepository;
+import org.lessons.java.spring_la_mia_pizzeria_crud.service.IngredientService;
 import org.lessons.java.spring_la_mia_pizzeria_crud.service.PizzaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,7 +28,7 @@ public class PizzaController {
     private PizzaService pizzaService;
 
     @Autowired
-    private IngredientRepository ingredientRepository;
+    private IngredientService ingredientService;
 
     @GetMapping
     public String index(Model model, @RequestParam(name = "name", required = false) String name) {
@@ -50,7 +49,7 @@ public class PizzaController {
         try {
             Pizza pizza = pizzaService.getById(id);
             model.addAttribute("pizza", pizza);
-        } catch (NoSuchElementException e) {
+        } catch (EntityNotFoundException e) {
             model.addAttribute("pizza", null);
         }
 
@@ -61,7 +60,7 @@ public class PizzaController {
     public String create(Model model) {
 
         model.addAttribute("pizza", new Pizza());
-        model.addAttribute("ingredients", ingredientRepository.findAll());
+        model.addAttribute("ingredients", ingredientService.findAll());
         return "/pizzas/create-edit";
     }
 
@@ -69,7 +68,7 @@ public class PizzaController {
     public String store(@Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bindingResult, Model model) {
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("ingredients", ingredientRepository.findAll());
+            model.addAttribute("ingredients", ingredientService.findAll());
             return "/pizzas/create-edit";
         } else {
             pizzaService.create(formPizza);
@@ -80,10 +79,15 @@ public class PizzaController {
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
 
-        model.addAttribute("edit", true);
-        model.addAttribute("pizza", pizzaService.getById(id));
-        model.addAttribute("ingredients", ingredientRepository.findAll());
-        return "/pizzas/create-edit";
+        try {
+            model.addAttribute("edit", true);
+            model.addAttribute("pizza", pizzaService.getById(id));
+            model.addAttribute("ingredients", ingredientService.findAll());
+            return "/pizzas/create-edit";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("pizza", null);
+            return "/pizzas/show";
+        }
     }
 
     @PostMapping("/edit/{id}")
@@ -93,7 +97,7 @@ public class PizzaController {
         if (bindingResult.hasErrors()) {
             model.addAttribute("edit", true);
             model.addAttribute("pizza", pizzaService.getById(id));
-            model.addAttribute("ingredients", ingredientRepository.findAll());
+            model.addAttribute("ingredients", ingredientService.findAll());
             return "/pizzas/create-edit";
         } else {
             pizzaService.update(formPizza);
@@ -110,10 +114,15 @@ public class PizzaController {
 
     @GetMapping("/{id}/offer")
     public String createOffer(@PathVariable Integer id, Model model) {
-        Offer offer = new Offer();
-        offer.setPizza(pizzaService.getById(id));
+        try {
+            Offer offer = new Offer();
+            offer.setPizza(pizzaService.getById(id));
 
-        model.addAttribute("offer", offer);
-        return "offers/create-edit";
+            model.addAttribute("offer", offer);
+            return "offers/create-edit";
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("pizza", null);
+            return "/pizzas/show";
+        }
     }
 }

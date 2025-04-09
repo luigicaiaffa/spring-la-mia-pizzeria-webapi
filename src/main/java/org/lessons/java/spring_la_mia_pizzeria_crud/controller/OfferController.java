@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,11 +36,15 @@ public class OfferController {
 
     @GetMapping("/edit/{id}")
     public String edit(@PathVariable Integer id, Model model) {
-        Offer offer = offerService.getById(id);
-        
-        model.addAttribute("edit", true);
-        model.addAttribute("offer", offer);
-       
+        try {
+            Offer offer = offerService.getById(id);
+            model.addAttribute("edit", true);
+            model.addAttribute("offer", offer);
+
+        } catch (EntityNotFoundException e) {
+            model.addAttribute("offer", null);
+        }
+
         return "/offers/create-edit";
     }
 

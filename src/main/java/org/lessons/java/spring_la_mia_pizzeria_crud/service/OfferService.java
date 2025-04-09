@@ -7,6 +7,8 @@ import org.lessons.java.spring_la_mia_pizzeria_crud.repository.OfferRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class OfferService {
 
@@ -25,7 +27,7 @@ public class OfferService {
         Optional<Offer> offerAttempt = offerRepository.findById(id);
 
         if (offerAttempt.isEmpty()) {
-            //
+            throw new EntityNotFoundException();
         }
 
         return offerAttempt.get();
